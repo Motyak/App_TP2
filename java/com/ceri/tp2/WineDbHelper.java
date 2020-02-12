@@ -35,8 +35,14 @@ public class WineDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
 	// db.execSQL() with the CREATE TABLE ... command
+        db.execSQL("create table " + TABLE_NAME + "(" +
+                _ID + " integer primary key" +
+                COLUMN_NAME + " text," +
+                COLUMN_WINE_REGION + " text," +
+                COLUMN_LOC + " text," +
+                COLUMN_CLIMATE + " text," +
+                COLUMN_PLANTED_AREA + " integer)");
     }
 
     @Override
@@ -57,7 +63,18 @@ public class WineDbHelper extends SQLiteOpenHelper {
 
         // Inserting Row
         long rowID = 0;
+
+//        create ContentValues from Wine
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, wine.getTitle());
+        values.put(COLUMN_WINE_REGION, wine.getRegion());
+        values.put(COLUMN_LOC, wine.getLocalization());
+        values.put(COLUMN_CLIMATE, wine.getClimate());
+        values.put(COLUMN_PLANTED_AREA, wine.getPlantedArea());
+
 	// call db.insert()
+        rowID = db.insert(TABLE_NAME, null, values);
+
         db.close(); // Closing database connection
 
         return (rowID != -1);
@@ -70,7 +87,7 @@ public class WineDbHelper extends SQLiteOpenHelper {
     public int updateWine(Wine wine) {
         SQLiteDatabase db = this.getWritableDatabase();
 	int res;
-	res = 0;//
+	res = 0;//stub
 
         // updating row
 	// call db.update()
@@ -84,8 +101,15 @@ public class WineDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
 	Cursor cursor;
+
 	// call db.query()
-        cursor=null;//
+        cursor = db.query(TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
         
         if (cursor != null) {
             cursor.moveToFirst();
