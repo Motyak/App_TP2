@@ -78,15 +78,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        WineDbHelper wineDbHelper = new WineDbHelper(this);
-        wineDbHelper.getWritableDatabase();
+        if(item.getTitle().toString().equals("Supprimer")) {
+            WineDbHelper wineDbHelper = new WineDbHelper(this);
+            wineDbHelper.getWritableDatabase();
 
-        wineDbHelper.deleteWine(MainActivity.this.selectedWine);
+            wineDbHelper.deleteWine(MainActivity.this.selectedWine);
 
-        finish();
-        startActivity(getIntent());
+            finish();
+            startActivity(getIntent());
 
-        return true;
+            return true;
+        }
+        return false;
     }
 
     @Override
