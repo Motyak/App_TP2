@@ -38,6 +38,8 @@ public class WineActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
 //                on cree un Wine avec les nouvelles valeurs
                 Wine w = new Wine();
+//                on recupere l'id dans l'objet wine de l'intent
+                w.setId(((Wine)WineActivity.this.getIntent().getParcelableExtra("Wine")).getId());
                 w.setTitle(((EditText) findViewById(R.id.wineName)).getText().toString());
                 w.setRegion(((EditText) findViewById(R.id.editWineRegion)).getText().toString());
                 w.setLocalization(((EditText) findViewById(R.id.editLoc)).getText().toString());
@@ -46,6 +48,9 @@ public class WineActivity extends AppCompatActivity {
 
 //                on update le wine de la bdd
                 wineDbHelper.updateWine(w);
+
+//                on recharge la premiere activitee
+                startActivity(new Intent(WineActivity.this, MainActivity.class));
             }
         });
     }

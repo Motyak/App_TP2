@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import static android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE;
-
 public class WineDbHelper extends SQLiteOpenHelper {
 
     private static final String TAG = WineDbHelper.class.getSimpleName();
@@ -45,7 +43,7 @@ public class WineDbHelper extends SQLiteOpenHelper {
                 COLUMN_WINE_REGION + " text," +
                 COLUMN_LOC + " text," +
                 COLUMN_CLIMATE + " text," +
-                COLUMN_PLANTED_AREA + " integer)");
+                COLUMN_PLANTED_AREA + " text)");
     }
 
     @Override
@@ -89,11 +87,6 @@ public class WineDbHelper extends SQLiteOpenHelper {
      */
     public int updateWine(Wine wine) {
         SQLiteDatabase db = this.getWritableDatabase();
-	int res;
-	res = 0;//stub
-
-        //recuperer l'id du wine a modifier a partir du nom
-        long wineId = this.getWine(wine.getTitle()).getId();
 
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, wine.getTitle());
@@ -102,10 +95,8 @@ public class WineDbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_PLANTED_AREA, wine.getPlantedArea());
         cv.put(COLUMN_WINE_REGION, wine.getRegion());
 
-	// call db.update()
-    db.update(TABLE_NAME, cv, _ID+"="+wineId, null);
-
-        return res;
+        // call db.update()
+        return db.update(TABLE_NAME, cv, _ID+"="+wine.getId(), null);
     }
 
     /**
@@ -138,14 +129,14 @@ public class WineDbHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Wine getWine(String name) {
+    public Wine getWine(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
         cursor = db.query(TABLE_NAME,
                 null,
-                COLUMN_NAME + " = ?",
-                new String[]{name},
+                _ID + " = ?",
+                new String[]{String.valueOf(id)},
                 null,
                 null,
                 null);
@@ -183,6 +174,7 @@ public class WineDbHelper extends SQLiteOpenHelper {
     public static Wine cursorToWine(Cursor cursor) {
         Wine wine = new Wine();
 	// build a Wine object from cursor
+        wine.setId(cursor.getLong(cursor.getColumnIndex(_ID)));
         wine.setTitle(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
         wine.setRegion(cursor.getString(cursor.getColumnIndex(COLUMN_WINE_REGION)));
         wine.setLocalization(cursor.getString(cursor.getColumnIndex(COLUMN_LOC)));

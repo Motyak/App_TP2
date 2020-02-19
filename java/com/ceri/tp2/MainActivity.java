@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         WineDbHelper wineDbHelper = new WineDbHelper(this);
         wineDbHelper.getWritableDatabase(); //calls onCreate method
-        wineDbHelper.populate();// only once
+//        wineDbHelper.populate();// only once
 
         Cursor c = wineDbHelper.fetchAllWines();
 
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id) {
                 Wine wine = WineDbHelper.cursorToWine((Cursor)parent.getItemAtPosition(position));
+
+                System.out.println("nom:"+wine.getTitle()+" ; id:"+wine.getId());//
 
                 Intent intent = new Intent(MainActivity.this, WineActivity.class);
                 intent.putExtra("Wine", wine);
