@@ -122,9 +122,10 @@ public class WineDbHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-     public void deleteWine(Cursor cursor) {
+     public void deleteWine(Wine wine) {
         SQLiteDatabase db = this.getWritableDatabase();
         // call db.delete();
+         db.delete(TABLE_NAME, _ID+"="+String.valueOf(wine.getId()), null);
 
         db.close();
     }

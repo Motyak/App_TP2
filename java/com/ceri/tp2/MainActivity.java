@@ -3,6 +3,7 @@ package com.ceri.tp2;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,12 +18,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static Wine selectedWine = null;//
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        registerForContextMenu(findViewById(R.id.lvWines));
 
         WineDbHelper wineDbHelper = new WineDbHelper(this);
         wineDbHelper.getWritableDatabase(); //calls onCreate method
@@ -33,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, c,
                 new String[]{WineDbHelper.COLUMN_NAME,WineDbHelper.COLUMN_WINE_REGION}, new int[]{android.R.id.text1,android.R.id.text2});
 
-        ListView listView = (ListView) findViewById(R.id.lvWines);
+        final ListView listView = (ListView) findViewById(R.id.lvWines);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -49,6 +53,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                menu.add("Supprimer");
+
+                AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+                Wine wine = WineDbHelper.cursorToWine((Cursor)listView.getItemAtPosition(acmi.position));
+
+                MainActivity.this.selectedWine = wine;
+            }
+        });
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +74,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        WineDbHelper wineDbHelper = new WineDbHelper(this);
+        wineDbHelper.getWritableDatabase();
+
+        wineDbHelper.deleteWine(MainActivity.this.selectedWine);
+
+        finish();
+        startActivity(getIntent());
+
+        return true;
     }
 
     @Override
