@@ -36,8 +36,11 @@ public class WineDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 	// db.execSQL() with the CREATE TABLE ... command
+
+        Log.d(TAG, "onCreate: ");
+
         db.execSQL("create table " + TABLE_NAME + "(" +
-                _ID + " integer primary key" +
+                _ID + " integer primary key autoincrement," +
                 COLUMN_NAME + " text," +
                 COLUMN_WINE_REGION + " text," +
                 COLUMN_LOC + " text," +
@@ -120,6 +123,7 @@ public class WineDbHelper extends SQLiteOpenHelper {
      public void deleteWine(Cursor cursor) {
         SQLiteDatabase db = this.getWritableDatabase();
         // call db.delete();
+
         db.close();
     }
 

@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,30 +31,30 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 //        wines list, tmp
-        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-        Map<String, String> datum = new HashMap<String, String>(2);
-        datum.put("line1","Châteauneuf-du-pape");
-        datum.put("line2","vallée du Rhône");
-        data.add(datum);
-        datum = new HashMap<String, String>(2);
-        datum.put("line1", "Arbois");
-        datum.put("line2", "Jura");
-        data.add(datum);
+//        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+//        Map<String, String> datum = new HashMap<String, String>(2);
+//        datum.put("line1","Châteauneuf-du-pape");
+//        datum.put("line2","vallée du Rhône");
+//        data.add(datum);
+//        datum = new HashMap<String, String>(2);
+//        datum.put("line1", "Arbois");
+//        datum.put("line2", "Jura");
+//        data.add(datum);
+//
+//        SimpleAdapter adapter = new SimpleAdapter(this, data,
+//                android.R.layout.simple_list_item_2,
+//                new String[] {"line1", "line2" },
+//                new int[] {android.R.id.text1, android.R.id.text2 });
 
-        SimpleAdapter adapter = new SimpleAdapter(this, data,
-                android.R.layout.simple_list_item_2,
-                new String[] {"line1", "line2" },
-                new int[] {android.R.id.text1, android.R.id.text2 });
+        WineDbHelper wineDbHelper = new WineDbHelper(this);
+        wineDbHelper.getWritableDatabase(); //calls onCreate method
+        Cursor c = wineDbHelper.fetchAllWines();
+
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, c,
+                new String[]{WineDbHelper.COLUMN_NAME,WineDbHelper.COLUMN_WINE_REGION}, new int[]{android.R.id.text1,android.R.id.text2});
 
         ListView listView = (ListView) findViewById(R.id.lvWines);
         listView.setAdapter(adapter);
-
-//        WineDbHelper wineDbHelper = new WineDbHelper(this);
-//        wineDbHelper.getWritableDatabase(); //calls onCreate method
-//        wineDbHelper.populate();
-//        Cursor c = wineDbHelper.fetchAllWines();
-
-//        SimpleCursorAdapter c_adapter = new
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
