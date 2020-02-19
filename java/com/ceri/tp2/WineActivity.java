@@ -46,8 +46,12 @@ public class WineActivity extends AppCompatActivity {
                 w.setClimate(((EditText) findViewById(R.id.editClimate)).getText().toString());
                 w.setPlantedArea(((EditText) findViewById(R.id.editPlantedArea)).getText().toString());
 
-//                on update le wine de la bdd
-                wineDbHelper.updateWine(w);
+                if(w.getId()==0)
+//                    on ajoute le wine
+                    wineDbHelper.addWine(w);
+                else
+//                    on update le wine de la bdd
+                    wineDbHelper.updateWine(w);
 
 //                on recharge la premiere activitee
                 startActivity(new Intent(WineActivity.this, MainActivity.class));
