@@ -1,7 +1,7 @@
 package com.ceri.tp2;
 
+import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,15 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CursorAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,24 +24,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        wines list, tmp
-//        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-//        Map<String, String> datum = new HashMap<String, String>(2);
-//        datum.put("line1","Châteauneuf-du-pape");
-//        datum.put("line2","vallée du Rhône");
-//        data.add(datum);
-//        datum = new HashMap<String, String>(2);
-//        datum.put("line1", "Arbois");
-//        datum.put("line2", "Jura");
-//        data.add(datum);
-//
-//        SimpleAdapter adapter = new SimpleAdapter(this, data,
-//                android.R.layout.simple_list_item_2,
-//                new String[] {"line1", "line2" },
-//                new int[] {android.R.id.text1, android.R.id.text2 });
-
         WineDbHelper wineDbHelper = new WineDbHelper(this);
         wineDbHelper.getWritableDatabase(); //calls onCreate method
+        wineDbHelper.populate();// only once
+
         Cursor c = wineDbHelper.fetchAllWines();
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, c,
@@ -55,6 +35,17 @@ public class MainActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.lvWines);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+                Wine wine = WineDbHelper.cursorToWine((Cursor)parent.getItemAtPosition(position));
+
+                Intent intent = new Intent(MainActivity.this, WineActivity.class);
+                intent.putExtra("Wine", wine);
+                startActivity(intent);
+            }
+        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

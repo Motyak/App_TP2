@@ -92,8 +92,19 @@ public class WineDbHelper extends SQLiteOpenHelper {
 	int res;
 	res = 0;//stub
 
-        // updating row
+        //recuperer l'id du wine a modifier a partir du nom
+        long wineId = this.getWine(wine.getTitle()).getId();
+
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, wine.getTitle());
+        cv.put(COLUMN_CLIMATE, wine.getClimate());
+        cv.put(COLUMN_LOC, wine.getLocalization());
+        cv.put(COLUMN_PLANTED_AREA, wine.getPlantedArea());
+        cv.put(COLUMN_WINE_REGION, wine.getRegion());
+
 	// call db.update()
+    db.update(TABLE_NAME, cv, _ID+"="+wineId, null);
+
         return res;
     }
 
@@ -113,7 +124,7 @@ public class WineDbHelper extends SQLiteOpenHelper {
                 null,
                 null,
                 null);
-        
+
         if (cursor != null) {
             cursor.moveToFirst();
         }
@@ -125,6 +136,25 @@ public class WineDbHelper extends SQLiteOpenHelper {
         // call db.delete();
 
         db.close();
+    }
+
+    public Wine getWine(String name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+
+        cursor = db.query(TABLE_NAME,
+                null,
+                COLUMN_NAME + " = ?",
+                new String[]{name},
+                null,
+                null,
+                null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+
+        return this.cursorToWine(cursor);
     }
 
      public void populate() {
@@ -151,8 +181,14 @@ public class WineDbHelper extends SQLiteOpenHelper {
 
 
     public static Wine cursorToWine(Cursor cursor) {
-        Wine wine = null;
+        Wine wine = new Wine();
 	// build a Wine object from cursor
+        wine.setTitle(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
+        wine.setRegion(cursor.getString(cursor.getColumnIndex(COLUMN_WINE_REGION)));
+        wine.setLocalization(cursor.getString(cursor.getColumnIndex(COLUMN_LOC)));
+        wine.setClimate(cursor.getString(cursor.getColumnIndex(COLUMN_CLIMATE)));
+        wine.setPlantedArea(cursor.getString(cursor.getColumnIndex(COLUMN_PLANTED_AREA)));
+
         return wine;
     }
 }
