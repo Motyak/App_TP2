@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, WineActivity.class);
                 intent.putExtra("Wine", new Wine(0, "","","","",""));
+                intent.putExtra("Add", true);
                 startActivity(intent);
             }
         });

@@ -2,6 +2,7 @@ package com.ceri.tp2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ public class WineActivity extends AppCompatActivity {
         Button btnSauvegarder = (Button) findViewById(R.id.button);
 
         Wine wine = intent.getParcelableExtra("Wine");
+        final boolean fromAdd = intent.getBooleanExtra("Add", false);
 
         etNom.setText(wine.getTitle());
         etRegion.setText(wine.getRegion());
@@ -39,12 +41,20 @@ public class WineActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
 
                 String wineTitle = ((EditText) findViewById(R.id.wineName)).getText().toString();
+                String wineRegion = ((EditText) findViewById(R.id.editWineRegion)).getText().toString();
 
 //                si le nom est vide..
                 if((wineTitle.replaceAll("\\s", "").isEmpty())) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(WineActivity.this);
                     builder.setTitle("Sauvegarde impossible");
                     builder.setMessage("Le nom du vin doit être non vide.");
+                    builder.create().show();
+                }
+//                si le vin existe deja
+                else if(fromAdd && wineDbHelper.getWine(wineTitle, wineRegion) != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(WineActivity.this);
+                    builder.setTitle("Ajout impossible");
+                    builder.setMessage("Un vin portant le même nom existe déjà dans la base de données.");
                     builder.create().show();
                 }
                 else {
@@ -58,7 +68,7 @@ public class WineActivity extends AppCompatActivity {
                     w.setClimate(((EditText) findViewById(R.id.editClimate)).getText().toString());
                     w.setPlantedArea(((EditText) findViewById(R.id.editPlantedArea)).getText().toString());
 
-                    if(w.getId()==0)
+                    if(fromAdd)
 //                    on ajoute le wine
                         wineDbHelper.addWine(w);
                     else

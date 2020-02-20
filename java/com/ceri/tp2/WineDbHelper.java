@@ -43,7 +43,8 @@ public class WineDbHelper extends SQLiteOpenHelper {
                 COLUMN_WINE_REGION + " text," +
                 COLUMN_LOC + " text," +
                 COLUMN_CLIMATE + " text," +
-                COLUMN_PLANTED_AREA + " text)");
+                COLUMN_PLANTED_AREA + " text," +
+                "unique(" + COLUMN_NAME + "," + COLUMN_WINE_REGION + ") on conflict rollback");
     }
 
     @Override
@@ -145,6 +146,28 @@ public class WineDbHelper extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToFirst();
         }
+
+        return this.cursorToWine(cursor);
+    }
+
+    public Wine getWine(String title, String region) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+
+        cursor = db.query(TABLE_NAME,
+                null,
+                COLUMN_NAME + " = ? and " + COLUMN_WINE_REGION + " = ?",
+                new String[]{title, region},
+                null,
+                null,
+                null);
+
+//        if (cursor != null) {
+//            cursor.moveToFirst();
+//        }
+
+        if(!cursor.moveToFirst() || cursor.getCount() == 0)
+            return null;
 
         return this.cursorToWine(cursor);
     }
