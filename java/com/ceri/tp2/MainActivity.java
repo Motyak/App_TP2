@@ -30,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
         WineDbHelper wineDbHelper = new WineDbHelper(this);
         wineDbHelper.getWritableDatabase(); //calls onCreate method
-//        wineDbHelper.populate();// only once
+        if(wineDbHelper.getOnCreateCalled())
+            wineDbHelper.populate();
+
 
         Cursor c = wineDbHelper.fetchAllWines();
 

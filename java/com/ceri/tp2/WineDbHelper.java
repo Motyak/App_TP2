@@ -26,6 +26,8 @@ public class WineDbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CLIMATE = "climate";
     public static final String COLUMN_PLANTED_AREA = "publisher";
 
+    private boolean onCreateCalled = false;
+
     public WineDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -44,8 +46,12 @@ public class WineDbHelper extends SQLiteOpenHelper {
                 COLUMN_LOC + " text," +
                 COLUMN_CLIMATE + " text," +
                 COLUMN_PLANTED_AREA + " text," +
-                "unique(" + COLUMN_NAME + "," + COLUMN_WINE_REGION + ") on conflict rollback");
+                "unique(" + COLUMN_NAME + "," + COLUMN_WINE_REGION + ") on conflict rollback)");
+
+        this.onCreateCalled=true;
     }
+
+    public boolean getOnCreateCalled() { return this.onCreateCalled; }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -185,8 +191,6 @@ public class WineDbHelper extends SQLiteOpenHelper {
         addWine(new Wine("Ayze", "Savoie", "Haute-Savoie", "continental et montagnard", "20"));
         addWine(new Wine("Meursault", "Bourgogne", "Côte-d'Or", "océanique et continental", "395"));
         addWine(new Wine("Ventoux", "Vallée du Rhône", "Vaucluse", "méditerranéen", "7450"));
-
-
 
         SQLiteDatabase db = this.getReadableDatabase();
         long numRows = DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM "+TABLE_NAME, null);
